@@ -1,0 +1,5 @@
+[gfscluster]
+192.168.2.73 ansible_host=192.168.2.73 ip=192.168.2.73
+192.168.2.246 ansible_host=192.168.2.246 ip=192.168.2.246
+
+[rainbondcluster]
