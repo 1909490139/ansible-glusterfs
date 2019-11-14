@@ -56,6 +56,7 @@ offline_init(){
         apt-get install -y sshpass python-pip uuid-runtime pwgen expect
 		;;
 	centos)
+	mkdir /etc/yum.repo.d/backup && mv /etc/yum.repo.d/* /etc/yum.repo.d/backup
         rm -rf /opt/glusterfs/ && mkdir /opt/glusterfs/
         tar xf /opt/glusterfs.tgz -C /opt/glusterfs/
         cat > /etc/yum.repos.d/glusterfs.repo << EOF
@@ -71,6 +72,7 @@ EOF
 	*)
         exit 1
 	;;
+esac
 }
 
 online_init(){
