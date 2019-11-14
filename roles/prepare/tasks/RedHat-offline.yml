@@ -4,7 +4,7 @@
 - name: 
   file: 
     path: /etc/yum.repos.d/test.repo
-    stat: present
+    stat: touch
     
 - name: Delete default CentOS source
   shell: mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup
