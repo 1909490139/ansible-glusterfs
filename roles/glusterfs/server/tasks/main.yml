@@ -1,0 +1,52 @@
+---
+# Include variables and define needed variables.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+# Instal xfs package
+- name: install xfs Debian
+  apt: name=xfsprogs state=present
+  when: ansible_os_family == "Debian"
+
+- name: install xfs RedHat
+  yum: name=xfsprogs state=present
+  when: ansible_os_family == "RedHat"
+
+# Setup/install tasks.
+- include: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure GlusterFS is started and enabled at boot.
+  service: "name={{ glusterfs_daemon }} state=started enabled=yes"
+
+- name: Ensure Gluster brick and mount directories exist.
+  file: "path={{ item }} state=directory mode=0775"
+  with_items:
+     - "{{ gluster_brick_dir }}"
+     - "{{ gluster_mount_dir }}"
+
+- name: peer with other nodes
+  command: "gluster peer probe {{ hostvars[item]['ansible_default_ipv4']['address'] }}"
+  with_items:
+    - "{{ groups.gfscluster }}"
+  run_once: yes
+  register: peer_with_other_nodes
+  changed_when:
+    - "'already in peer list' not in peer_with_other_nodes.stdout"
+  when:
+    - item != inventory_hostname
+
+- name: Configure Gluster volume.
+  gluster_volume:
+    state: present
+    name: "{{ gluster_brick_name }}"
+    brick: "{{ gluster_brick_dir }}"
+    replicas: "{{ groups['gfscluster'] | length }}"
+    cluster: "{% for item in groups['gfscluster'] -%}{{ hostvars[item]['ip']|default(hostvars[item].ansible_default_ipv4['address']) }}{% if not loop.last %},{% endif %}{%- endfor %}"
+    host: "{{ inventory_hostname }}"
+    force: yes
+  run_once: true
+

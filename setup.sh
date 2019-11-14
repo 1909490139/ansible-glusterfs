@@ -43,10 +43,40 @@ other_type_linux(){
     esac
 }
 
+offline_init(){
+    lsb_dist=$( get_distribution )
+    lsb_dist="$(echo "$lsb_dist" | tr '[:upper:]' '[:lower:]')"
+
+
+
+    case "$lsb_dist" in
+	ubuntu|debian)
+
+        apt-get update
+        apt-get install -y sshpass python-pip uuid-runtime pwgen expect
+		;;
+	centos)
+        rm -rf /opt/glusterfs/ && mkdir /opt/glusterfs/
+        tar xf /opt/glusterfs.tgz -C /opt/glusterfs/
+        cat > /etc/yum.repos.d/glusterfs.repo << EOF
+[glusterfs]
+name=rainbond_offline_install_repo
+baseurl=file:///opt/glusterfs/pkgs/rpm/centos/7
+gpgcheck=0
+enabled=1
+EOF
+        yum makecache
+        yum install -y ansible
+	;;
+	*)
+        exit 1
+	;;
+}
+
 online_init(){
     lsb_dist=$( get_distribution )
     lsb_dist="$(echo "$lsb_dist" | tr '[:upper:]' '[:lower:]')"
-    progress "Detect $lsb_dist required packages..."
+
     case "$lsb_dist" in
 		ubuntu|debian)
             apt-get update
@@ -72,6 +102,11 @@ install(){
 }
 
 case $1 in
+    offline)
+        other_type_linux
+        offline_init
+        install
+    ;;
     *)
         other_type_linux
         online_init

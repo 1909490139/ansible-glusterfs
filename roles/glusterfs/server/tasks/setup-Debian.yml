@@ -7,18 +7,20 @@
   register: glusterfs_ppa_added
   when: glusterfs_ppa_use
 
-- name: Ensure GlusterFS client will reinstall if the PPA was just added.
+- name: Ensure GlusterFS will reinstall if the PPA was just added.
   apt:
-    name: "{{ item }}"
+    name:
+      - glusterfs-server
+      - glusterfs-client
     state: absent
-  with_items:
-    - glusterfs-client
+    
   when: glusterfs_ppa_added.changed
 
-- name: Ensure GlusterFS client is installed.
+- name: Ensure GlusterFS is installed.
   apt:
-    name: "{{ item }}"
+    name: 
+      - glusterfs-server
+      - glusterfs-client
     state: installed
     default_release: "{{ glusterfs_default_release }}"
-  with_items:
-    - glusterfs-client
+

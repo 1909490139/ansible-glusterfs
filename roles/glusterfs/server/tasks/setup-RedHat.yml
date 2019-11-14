@@ -1,0 +1,15 @@
+---
+- name: Install Prerequisites
+  yum: 
+    name:
+      - "centos-release-gluster{{ glusterfs_default_release }}"
+    state: present
+
+- name: Install Packages
+  yum: 
+    name:
+      - glusterfs-server
+      - glusterfs-client
+  state: present
+
+

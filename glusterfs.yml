@@ -1,11 +1,6 @@
 ---
 - hosts: gfscluster
-  vars:
-    ansible_ssh_pipelining: true
   roles:
+    - { role: prepare }
     - { role: glusterfs/server }
-
-- hosts: rainbondcluster
-  roles:
-    - { role: glusterfs/client }
 
