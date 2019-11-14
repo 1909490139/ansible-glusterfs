@@ -44,7 +44,7 @@ other_type_linux(){
 }
 
 offline_init(){
-    sed -ir 's/install_type: online/install_type: offline/' ../roles/glusterfs/server/defaults/main.yml
+    sed -ir 's/install_type: online/install_type: offline/' ./roles/glusterfs/server/defaults/main.yml
     lsb_dist=$( get_distribution )
     lsb_dist="$(echo "$lsb_dist" | tr '[:upper:]' '[:lower:]')"
 
@@ -57,7 +57,8 @@ offline_init(){
         apt-get install -y sshpass python-pip uuid-runtime pwgen expect
 		;;
 	centos)
-	    mkdir /etc/yum.repos.d/backup && mv -f /etc/yum.repos.d/*.repo /etc/yum.repo.d/backup
+	    mkdir -p /etc/yum.repos.d/backup >/dev/null 2>&1
+        mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup
         rm -rf /opt/glusterfs/ && mkdir /opt/glusterfs/
         tar xf /opt/glusterfs.tgz -C /opt/glusterfs/
         cat > /etc/yum.repos.d/glusterfs.repo << EOF

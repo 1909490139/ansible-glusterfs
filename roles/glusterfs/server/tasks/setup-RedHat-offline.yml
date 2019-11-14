@@ -3,4 +3,4 @@
     name:
       - glusterfs-server
       - glusterfs-client
-  state: present
+    state: present

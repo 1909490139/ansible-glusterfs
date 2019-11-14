@@ -42,26 +42,5 @@
     regexp: 'ModLoad imjournal'
     line: '#$ModLoad imjournal # provides access to the systemd journal'
 
-- name: Create the yum source backup folder
-  file: path=/etc/yum.repos.d/backup state=directory
-  when: ansible_os_family == 'RedHat' and install_type == "offline"
-
-- name: Delete default CentOS source
-  shell: mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup
-  when: ansible_os_family == 'RedHat' and install_type == "offline"
-
-- name:  Add Offline CentOS Repository
-  template: src=glusterfs.repo.j2 dest=/etc/yum.repos.d/glusterfs.repo
-  when: ansible_os_family == 'RedHat' and install_type == "offline"
-
-- name: Copy pkgs into /opt/glusterfs
-  copy:
-    src: /opt/glusterfs/pkgs
-    dest: /opt/glusterfs
-  when: ansible_os_family == 'RedHat' and install_type == "offline"
-
-- name: Clear default cache
-  command: yum clean all
-  args:
-    warn: no
+- include: RedHat-offline.yml
   when: ansible_os_family == 'RedHat' and install_type == "offline"

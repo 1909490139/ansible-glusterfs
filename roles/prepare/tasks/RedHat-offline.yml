@@ -1,0 +1,23 @@
+- name: Create the yum source backup folder
+  file: path=/etc/yum.repos.d/backup state=directory
+
+- name: 
+  file: 
+    path: /etc/yum.repos.d/test.repo
+    stat: present
+    
+- name: Delete default CentOS source
+  shell: mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup
+
+- name:  Add Offline CentOS Repository
+  template: src=glusterfs.repo.j2 dest=/etc/yum.repos.d/glusterfs.repo
+
+- name: Copy pkgs into /opt/glusterfs
+  copy:
+    src: /opt/glusterfs/pkgs
+    dest: /opt/glusterfs
+
+- name: Clear default cache
+  command: yum clean all
+  args:
+    warn: no
