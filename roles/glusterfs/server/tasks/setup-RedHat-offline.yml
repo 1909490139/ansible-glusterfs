@@ -1,0 +1,6 @@
+- name: Install Packages
+  yum: 
+    name:
+      - glusterfs-server
+      - glusterfs-client
+  state: present

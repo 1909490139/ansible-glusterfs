@@ -44,6 +44,7 @@ other_type_linux(){
 }
 
 offline_init(){
+    sed -ir 's/install_type: online/install_type: offline/' ../roles/glusterfs/server/defaults/main.yml
     lsb_dist=$( get_distribution )
     lsb_dist="$(echo "$lsb_dist" | tr '[:upper:]' '[:lower:]')"
 

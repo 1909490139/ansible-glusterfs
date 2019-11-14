@@ -8,8 +8,8 @@
 - name: Install Packages
   yum: 
     name:
-      - glusterfs-server
-      - glusterfs-client
+      - glusterfs-server-6.0-1.el7
+      - glusterfs-client-6.0-1.el7
   state: present
 
 

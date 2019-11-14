@@ -4,6 +4,7 @@ glusterfs_default_release: ""
 glusterfs_ppa_use: yes
 glusterfs_ppa_version: "3.12"
 
+install_type: online
 # Gluster configuration.
 gluster_mount_dir: /mnt/gluster
 gluster_volume_node_mount_dir: /mnt/xfs-drive-gluster

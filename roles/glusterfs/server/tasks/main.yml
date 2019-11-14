@@ -14,7 +14,10 @@
 
 # Setup/install tasks.
 - include: setup-RedHat.yml
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' and install_type == "online"
+
+- include: setup-RedHat-offline.yml
+  when: ansible_os_family == 'RedHat' and install_type == "offline"
 
 - include: setup-Debian.yml
   when: ansible_os_family == 'Debian'
