@@ -13,13 +13,13 @@
   when: ansible_os_family == "RedHat"
 
 # Setup/install tasks.
-- include: setup-RedHat.yml
+- import_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat' and install_type == "online"
 
-- include: setup-RedHat-offline.yml
+- import_tasks: setup-RedHat-offline.yml
   when: ansible_os_family == 'RedHat' and install_type == "offline"
 
-- include: setup-Debian.yml
+- import_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
 - name: Ensure GlusterFS is started and enabled at boot.

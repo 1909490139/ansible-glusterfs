@@ -1,0 +1,35 @@
+- name: Check presence of fastestmirror.conf
+  stat:
+    path: /etc/yum/pluginconf.d/fastestmirror.conf
+  register: fastestmirror
+
+# fastestmirror plugin actually slows down Ansible deployments
+- name: Disable fastestmirror plugin
+  lineinfile:
+    dest: /etc/yum/pluginconf.d/fastestmirror.conf
+    regexp: "^enabled=.*"
+    line: "enabled=0"
+    state: present
+  become: true
+  when: fastestmirror.stat.exists
+
+- name: remove centos firewall pkg
+  yum: 
+    name: 
+      - firewalld
+      - python-firewall
+      - firewalld-filesystem
+#      - container-selinux
+      - dnsmasq
+      - nscd
+    state: absent
+
+- name: disable selinux
+  shell: "setenforce 0"
+  failed_when: false
+
+- name: disable selinux forover
+  lineinfile:
+    dest: /etc/selinux/config
+    regexp: "^SELINUX="
+    line: "SELINUX=disabled"

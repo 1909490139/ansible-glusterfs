@@ -1,46 +1,12 @@
 ---
-- name: Check presence of fastestmirror.conf
-  stat:
-    path: /etc/yum/pluginconf.d/fastestmirror.conf
-  register: fastestmirror
+- import_tasks: RedHat.yml
+  when: ansible_os_family == 'RedHat'
 
-# fastestmirror plugin actually slows down Ansible deployments
-- name: Disable fastestmirror plugin
-  lineinfile:
-    dest: /etc/yum/pluginconf.d/fastestmirror.conf
-    regexp: "^enabled=.*"
-    line: "enabled=0"
-    state: present
-  become: true
-  when: fastestmirror.stat.exists
+- import_tasks: RedHat-offline.yml
+  when: ansible_os_family == 'RedHat' and install_type == 'offline'
 
-- name: remove centos firewall pkg
-  yum: 
-    name: 
-      - firewalld
-      - python-firewall
-      - firewalld-filesystem
-#      - container-selinux
-      - dnsmasq
-      - nscd
-    state: absent
+- import_tasks: Debian.yml
+  when: ansible_os_family == "Debian"
 
-- name: disable selinux
-  shell: "setenforce 0"
-  failed_when: false
-
-- name: disable selinux forover
-  lineinfile:
-    dest: /etc/selinux/config
-    regexp: "^SELINUX="
-    line: "SELINUX=disabled"
-
-- name: disable rsyslog get journald
-  lineinfile:
-    dest: /etc/rsyslog.conf
-    state: present
-    regexp: 'ModLoad imjournal'
-    line: '#$ModLoad imjournal # provides access to the systemd journal'
-
-- include: RedHat-offline.yml
-  when: ansible_os_family == 'RedHat' and install_type == "offline"
+- import_tasks: Debian-offline.yml
+  when: ansible_os_family == 'Debian' and install_type == 'offline'

@@ -1,0 +1,20 @@
+---
+- name: rm ubuntu lxd & ufw package
+  apt: 
+    name: 
+      - ufw
+      - lxd
+      - lxd-client
+      - lxcfs
+      - lxc-common
+      - nscd
+      - dnsmasq
+    state: absent
+    force: yes
+  tags: prepare
+
+- name: configuration ulimits
+  lineinfile:
+    dest: /etc/profile
+    regexp: "ulimit -SHn"
+    line: "ulimit -SHn 65535"
